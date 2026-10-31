@@ -1,0 +1,20 @@
+{
+  "name": "dependency-guard",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:web": "npm run dev -w @dependency-guard/web",
+    "dev:api": "npm run dev -w @dependency-guard/api",
+    "build": "npm run build -w @dependency-guard/web",
+    "test": "npm test -w @dependency-guard/api",
+    "start": "npm start -w @dependency-guard/api"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "Apache-2.0"
+}

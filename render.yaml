@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: dependency-guard-api
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: WEB_ORIGIN
+        sync: false
+      - key: MAX_UPLOAD_BYTES
+        value: 5242880
+      - key: MAX_CONCURRENT_SCANS
+        value: 2
+      - key: OSV_SCANNER_PATH
+        value: /usr/local/bin/osv-scanner
