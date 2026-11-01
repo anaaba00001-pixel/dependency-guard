@@ -11,7 +11,7 @@ test('passes a valid package-lock.json to the v2.7 source scan command', async (
   const result = await scanBuffer('package-lock.json', fixture, {
     scannerPath: '/usr/local/bin/osv-scanner',
     execute: async (executable, args, options) => {
-      const target = args.at(-1);
+      const target = args.at(-1).slice('--lockfile='.length);
       const parsed = JSON.parse(await readFile(target, 'utf8'));
       observed = { executable, args, options, parsed };
       return { stdout: JSON.stringify({ results: [] }), stderr: '' };
@@ -19,7 +19,8 @@ test('passes a valid package-lock.json to the v2.7 source scan command', async (
   });
 
   assert.equal(observed.executable, '/usr/local/bin/osv-scanner');
-  assert.deepEqual(observed.args.slice(0, -1), ['scan', 'source', '--format=json', '--all-packages', '--lockfile']);
+  assert.deepEqual(observed.args.slice(0, -1), ['scan', 'source', '--format=json', '--all-packages']);
+  assert.match(observed.args.at(-1), /^--lockfile=.*package-lock\.json$/);
   assert.equal(observed.parsed.lockfileVersion, 3);
   assert.equal(observed.parsed.packages['node_modules/lodash'].version, '4.17.21');
   assert.equal(observed.options.shell, false);
@@ -61,6 +62,6 @@ test('returns an actionable error when OSV-Scanner finds no packages', async () 
 
 test('scanner arguments stay compatible with the pinned OSV-Scanner CLI', () => {
   assert.deepEqual(scannerArgs('/tmp/package-lock.json'), [
-    'scan', 'source', '--format=json', '--all-packages', '--lockfile', '/tmp/package-lock.json'
+    'scan', 'source', '--format=json', '--all-packages', '--lockfile=/tmp/package-lock.json'
   ]);
 });

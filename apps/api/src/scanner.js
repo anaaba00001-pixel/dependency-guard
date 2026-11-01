@@ -9,7 +9,7 @@ import { mockRawResult } from './mock-result.js';
 const execFileAsync = promisify(execFile);
 
 export function scannerArgs(target) {
-  return ['scan', 'source', '--format=json', '--all-packages', '--lockfile', target];
+  return ['scan', 'source', '--format=json', '--all-packages', `--lockfile=${target}`];
 }
 
 function diagnostic(error, fileName, scannerPath) {
