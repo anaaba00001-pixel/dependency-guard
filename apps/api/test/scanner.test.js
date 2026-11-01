@@ -43,6 +43,22 @@ test('records OSV-Scanner stderr and exit metadata on a real failure', async () 
   assert.equal(entries[0].stderr, 'invalid lockfile syntax');
 });
 
+test('returns an actionable error when OSV-Scanner finds no packages', async () => {
+  const fixture = await readFile(fixtureUrl);
+  await assert.rejects(
+    scanBuffer('package-lock.json', fixture, {
+      execute: async () => {
+        throw Object.assign(new Error('process exited'), {
+          code: 128,
+          stderr: 'No package sources found, --help for usage information.'
+        });
+      },
+      logger: { error: () => {} }
+    }),
+    error => error.status === 422 && error.message.includes('لم يعثر محرك الفحص على حزم')
+  );
+});
+
 test('scanner arguments stay compatible with the pinned OSV-Scanner CLI', () => {
   assert.deepEqual(scannerArgs('/tmp/package-lock.json'), [
     'scan', 'source', '--format=json', '--all-packages', '--lockfile', '/tmp/package-lock.json'

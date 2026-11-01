@@ -7,6 +7,11 @@ const integer = (name, fallback) => {
   return Number.isFinite(value) && value > 0 ? value : fallback;
 };
 
+const nonNegativeInteger = (name, fallback) => {
+  const value = Number.parseInt(process.env[name] ?? '', 10);
+  return Number.isFinite(value) && value >= 0 ? value : fallback;
+};
+
 export const config = Object.freeze({
   port: integer('PORT', 8080),
   webOrigin: process.env.WEB_ORIGIN ?? 'http://localhost:5173',
@@ -15,6 +20,7 @@ export const config = Object.freeze({
   scanTimeoutMs: integer('SCAN_TIMEOUT_MS', 120_000),
   maxUploadBytes: integer('MAX_UPLOAD_BYTES', 5 * 1024 * 1024),
   maxConcurrentScans: integer('MAX_CONCURRENT_SCANS', 2),
+  trustProxyHops: nonNegativeInteger('TRUST_PROXY_HOPS', 0),
   production: process.env.NODE_ENV === 'production',
   staticDir: path.resolve(process.cwd(), process.env.STATIC_DIR ?? '../web/dist')
 });

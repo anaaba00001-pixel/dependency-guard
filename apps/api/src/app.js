@@ -14,8 +14,9 @@ const upload = multer({ storage: multer.memoryStorage(), limits: { files: 1, fil
 const scans = new Map();
 const semaphore = new Semaphore(config.maxConcurrentScans);
 
-export function createApp() {
+export function createApp({ trustProxyHops = config.trustProxyHops } = {}) {
   const app = express();
+  if (trustProxyHops > 0) app.set('trust proxy', trustProxyHops);
   app.disable('x-powered-by');
   app.use(helmet({ crossOriginResourcePolicy: { policy: 'same-site' } }));
   app.use(cors({ origin: config.webOrigin.split(',').map(value => value.trim()), methods: ['GET', 'POST'] }));

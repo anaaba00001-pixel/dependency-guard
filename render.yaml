@@ -13,5 +13,7 @@ services:
         value: 5242880
       - key: MAX_CONCURRENT_SCANS
         value: 2
+      - key: TRUST_PROXY_HOPS
+        value: 1
       - key: OSV_SCANNER_PATH
         value: /usr/local/bin/osv-scanner

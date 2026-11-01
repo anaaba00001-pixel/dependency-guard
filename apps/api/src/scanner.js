@@ -54,6 +54,9 @@ export async function scanBuffer(fileName, buffer, options = {}) {
     logger.error(diagnostic(error, fileName, scannerPath));
     if (error.code === 'ENOENT') throw Object.assign(new Error('محرك OSV-Scanner غير مثبت على الخادم.'), { status: 503 });
     if (error.killed || error.code === 'ETIMEDOUT') throw Object.assign(new Error('انتهت مهلة الفحص.'), { status: 504 });
+    if (String(error.stderr ?? '').includes('No package sources found')) {
+      throw Object.assign(new Error('لم يعثر محرك الفحص على حزم داخل الملف. ارفع ملف قفل يحتوي على اعتماديات مثبّتة.'), { status: 422 });
+    }
     throw Object.assign(new Error('تعذر إكمال الفحص. تحقق من صحة ملف المكتبات.'), { status: 422 });
   } finally {
     await rm(directory, { recursive: true, force: true });
